@@ -1,29 +1,70 @@
+# sample code
+# https://projects.raspberrypi.org/en/projects/get-started-pico-w/2
+# document
+# https://micropython-docs-ja.readthedocs.io/ja/latest/esp8266/tutorial/network_tcp.html#simple-http-server
+
 import network
 import time
+import socket
+import machine
 
-ssid = "your ssid" # 2.4GHzの方を指定
+
+led = machine.Pin("LED", machine.Pin.OUT)
+led.off()
+
+# ssidは必ず2.4GHz帯の方
+ssid = "your ssid"
 pw = "your password"
 
-wlan = network.WLAN(network.STA_IF)
-wlan.active(True)
-wlan.connect(ssid, pw)
+# Connect to WLAN
+def connect(ssid, pw):
+    wlan = network.WLAN(network.STA_IF)
+    wlan.active(True)
+    wlan.connect(ssid, pw)
+    while wlan.isconnected() == False:
+        print("Waiting for connection...")
+        sleep(1)
+    #print(wlan.ifconfig())
+    ip = wlan.ifconfig()[0]
+    print(f'Connected on {ip}')
+    return ip
 
-# 接続確認
-# ステータスコード → https://micropython-docs-ja.readthedocs.io/ja/latest/library/network.WLAN.html#network.WLAN.status
-wait = 10
-while wait > 0:
-    if wlan.status() < 0 or wlan.status() >= 3:
-        break
-    wait -= 1
-    time.sleep(1)
-    
-if wlan.status() != 3:
-    raise RuntimeError("network connection failed")
-else:
-    print("Connected")
-    cnf = wlan.ifconfig()
-    print("ip = " + cnf[0])
+# Open a socket
+def open_socket(ip):
+    address = (ip, 80)
+    connection = socket.socket()
+    connection.bind(address)
+    connection.listen(1)
+    return connection
 
-# 実行すると下記のような出力になる
-# Connected
-# ip = 192.168.1.35
+# Build html
+def build_html():
+    return f"""
+            <!DOCTYPE html>
+            <html>
+            <head>
+            <title>raspberry pi pico w</title>
+            </head>
+            <body>
+            hello raspberry pi pico w!
+            </body>
+            </html>
+            """
+
+# Start a web server
+def serve(connection):
+    while True:
+        client = connection.accept()[0]
+        request = client.recv(1024)
+        request = str(request)
+        print(request)
+        client.send(build_html())
+        client.close()
+        
+try:
+    ip = connect(ssid, pw)
+    led.on()
+    connection = open_socket(ip)
+    serve(connection)
+except KeyboardInterrupt:
+    machine.reset()
