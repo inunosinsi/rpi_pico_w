@@ -23,3 +23,7 @@ else:
     print("Connected")
     cnf = wlan.ifconfig()
     print("ip = " + cnf[0])
+
+# 実行すると下記のような出力になる
+# Connected
+# ip = 192.168.1.35
