@@ -4,7 +4,7 @@
 # https://micropython-docs-ja.readthedocs.io/ja/latest/esp8266/tutorial/network_tcp.html#simple-http-server
 
 import network
-import time
+import utime
 import socket
 import machine
 
@@ -21,9 +21,13 @@ def connect(ssid, pw):
     wlan = network.WLAN(network.STA_IF)
     wlan.active(True)
     wlan.connect(ssid, pw)
+    wait = 0
     while wlan.isconnected() == False:
         print("Waiting for connection...")
-        sleep(1)
+        utime.sleep(1)
+        wait += 1
+        if wait > 0:
+            raise RuntimeError("network connection failed")
     #print(wlan.ifconfig())
     ip = wlan.ifconfig()[0]
     print(f'Connected on {ip}')
