@@ -3,10 +3,6 @@ import utime
 import socket
 import machine
 
-
-led = machine.Pin("LED", machine.Pin.OUT)
-led.off()
-
 # ssidは必ず2.4GHz帯の方
 ssid = "your ssid"
 pw = "your password"
@@ -16,20 +12,35 @@ def connect(ssid, pw):
     wlan = network.WLAN(network.STA_IF)
     wlan.active(True)
     wlan.connect(ssid, pw)
+    wait = 0
     while wlan.isconnected() == False:
         print("Waiting for connection...")
         utime.sleep(1)
+        wait += 1
+        if wait > 20:
+            raise RuntimeError("network connection failed")
     #print(wlan.ifconfig())
     ip = wlan.ifconfig()[0]
     print(f'Connected on {ip}')
     return ip
 
-def http_get(url):
-    print(url)
-    
-        
+def http_get(host, port):
+    ai = socket.getaddrinfo(host, port)
+    addr = ai[0][-1]
+
+    # Create a socket and make a HTTP request
+    s = socket.socket()
+    s.connect(addr)
+    s.send(b"GET / HTTP/1.0\r\n\r\n")
+
+    # Print the response
+    print(s.recv(512))
+
+
+host = "192.168.0.1"
+port = 80
 try:
     ip = connect(ssid, pw)
-    led.on()
+    http_get(host, port)
 except KeyboardInterrupt:
     machine.reset()
