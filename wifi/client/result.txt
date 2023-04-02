@@ -1,0 +1,18 @@
+Connected on 192.168.1.35
+HTTP/1.0 200 OK
+Server: SimpleHTTP/0.6 Python/3.9.2
+Date: Sun, 02 Apr 2023 21:03:30 GMT
+Content-type: text/html
+Content-Length: 147
+Last-Modified: Sat, 01 Apr 2023 23:48:46 GMT
+
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>python simple server</title>
+<head>
+<body>
+hello python simple server.
+</body>
+</html>
