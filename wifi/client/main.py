@@ -23,7 +23,6 @@ def connect(ssid, pw):
         wait += 1
         if wait > 20:
             raise RuntimeError("network connection failed")
-    #print(wlan.ifconfig())
     ip = wlan.ifconfig()[0]
     print(f'Connected on {ip}')
     return ip
