@@ -1,3 +1,5 @@
+# https://www.infineon.com/cms/jp/product/wireless-connectivity/airoc-wi-fi-plus-bluetooth-combos/wi-fi-4-802.11n/cyw43439/
+
 import network
 import utime
 import socket
@@ -34,7 +36,12 @@ def http_get(host, port):
     s.send(b"GET / HTTP/1.0\r\n\r\n")
 
     # Print the response
-    print(s.recv(512))
+    while True:
+        data = s.recv(100)
+        if data:
+            print(str(data, 'utf8'), end='')
+        else:
+            break
 
 
 host = "192.168.0.1"
