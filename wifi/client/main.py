@@ -1,4 +1,6 @@
 # https://www.infineon.com/cms/jp/product/wireless-connectivity/airoc-wi-fi-plus-bluetooth-combos/wi-fi-4-802.11n/cyw43439/
+# ドキュメントはESP8266と同じで良いか？
+# https://micropython-docs-ja.readthedocs.io/ja/latest/esp8266/quickref.html
 
 import network
 import utime
