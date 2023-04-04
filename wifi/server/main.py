@@ -26,7 +26,7 @@ def connect(ssid, pw):
         print("Waiting for connection...")
         utime.sleep(1)
         wait += 1
-        if wait > 0:
+        if wait > 20:
             raise RuntimeError("network connection failed")
     #print(wlan.ifconfig())
     ip = wlan.ifconfig()[0]
@@ -59,9 +59,9 @@ def build_html():
 def serve(connection):
     while True:
         client = connection.accept()[0]
-        request = client.recv(1024)
-        request = str(request)
-        print(request)
+        data = client.recv(1024)
+        if data:
+            print(str(data, 'utf8'), end='')
         client.send(build_html())
         client.close()
         
